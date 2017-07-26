@@ -1,0 +1,104 @@
+# depslib dependency file v1.0
+1501083865 source:f:\projects\unfinished\markeri\marker_detector\main.cpp
+	<iostream>
+	<list>
+	<fstream>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	<cmath>
+	<cstring>
+	<vector>
+	<fstream>
+	<sstream>
+	"file management.h"
+	"algorithms.h"
+
+1500744957 f:\projects\unfinished\markeri\marker_detector\file management.h
+
+1500830325 source:f:\projects\unfinished\markeri\marker_detector\file management.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	<cmath>
+	<cstring>
+	<vector>
+	<fstream>
+
+1500744957 source:c:\users\miæiæ\desktop\marker_detector\file management.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	<cmath>
+	<cstring>
+	<vector>
+	<fstream>
+
+1500761430 source:c:\users\miæiæ\desktop\marker_detector\main.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	<cmath>
+	<cstring>
+	<vector>
+	<fstream>
+	"file management.h"
+	"algorithms.h"
+
+1500744957 c:\users\miæiæ\desktop\marker_detector\file management.h
+
+1500761452 source:c:\users\miæiæ\desktop\marker_detector\algorithms.cpp
+	<vector>
+
+1500761317 c:\users\miæiæ\desktop\marker_detector\algorithms.h
+	<vector>
+
+1501079697 source:f:\projects\unfinished\markeri\marker_detector\algorithms.cpp
+	<vector>
+	<list>
+	<cmath>
+	<iostream>
+
+1501071472 f:\projects\unfinished\markeri\marker_detector\algorithms.h
+	<vector>
+
+1500830325 source:c:\users\miæiæ\desktop\2\marker_detector\file management.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	<cmath>
+	<cstring>
+	<vector>
+	<fstream>
+
+1500850073 source:c:\users\miæiæ\desktop\2\marker_detector\main.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	<cmath>
+	<cstring>
+	<vector>
+	<fstream>
+	"file management.h"
+	"algorithms.h"
+
+1500744957 c:\users\miæiæ\desktop\2\marker_detector\file management.h
+
+1500842280 c:\users\miæiæ\desktop\2\marker_detector\algorithms.h
+	<vector>
+
+1500852163 source:c:\users\miæiæ\desktop\2\marker_detector\algorithms.cpp
+	<vector>
+	<cmath>
+	<iostream>
+
