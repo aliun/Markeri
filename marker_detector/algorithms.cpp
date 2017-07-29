@@ -10,6 +10,11 @@ struct coord
     int x,y;
 };
 
+struct coord3d
+{
+    int x,y,z;
+};
+
 struct prava
 {
     double a,b,c;
@@ -1049,5 +1054,125 @@ vector<vector<int> > bacimrezu(vector<vector<int> >& gimage, int minx, int miny,
 
     return mreza;
 }
+
+vector<pair<double, double> > resi_sistem(double a[], double b[])
+{
+    double a1,b1,b2,c1,c2;
+
+    a1=b[1]-b[0]*a[1]/a[0];
+
+    b1=b[2]-b[0]*a[2]/a[0];
+    b2=b[4]-b[0]*a[4]/a[0];
+
+    c1=b[3]-b[0]*a[3]/a[0];
+    c2=b[5]-b[0]*a[5]/a[0];
+
+
+    double d1,d2,d3;
+
+    d1=b1*b1;
+    d2=2*b1*b2-4*a1*c1;
+    d3=b2*b2-4*a1*c2;
+
+    double aprim,bprim,cprim,f1,f2;
+
+    aprim=a[0]+a[1]*b1*b1/(4*a1*a1)+a[1]*d1/(4*a1*a1)-a[2]*b1/(2*a1);
+    bprim=a[1]*2*b1*b2/(4*a1*a1)+d2*a[1]/(4*a1*a1)-a[2]*b2/(2*a1)+a[3]-a[4]*b1/(2*a1);
+    cprim=a[1]*b2*b1/(4*a1*a1)+a[1]*d3/(4*a1*a1)-a[4]*b2/(2*a1)+a[5];
+
+    f1=-a[1]*b1/(2*a1*a1)+a[2]/(2*a1);
+    f2=a[4]/(2*a1);
+
+    double q[5],r[5],s[5];
+
+    q[0]=aprim*aprim;
+    q[1]=2*aprim*bprim;
+    q[2]=bprim*bprim+2*aprim*cprim;
+    q[3]=2*bprim*cprim;
+    q[4]=cprim*cprim;
+
+    r[0]=d1*f1*f1;
+    r[1]=d2*f1*f1+2*f1*f2*d1;
+    r[2]=d2*2*f1*f2+d3*f1*f1+f2*f2*d1;
+    r[3]=d2*f2*f2+2*f1*f2*d3+d3*f2*f2;
+    r[4]=d3*f2*f2;
+
+    for (int i=0; i<5; i++) s[i]=q[i]-r[i];
+
+    double x1,y1,x2,y2,x3,x4,y3,y4;
+
+    double p1,p2,p3,p4,p5,p6;
+
+    p1=2*s[2]*s[2]*s[2]-9*s[1]*s[2]*s[3]+27*s[0]*s[3]*s[3]+27*s[1]*s[1]*s[4]-72*s[0]*s[2]*s[4];
+    p2=p1+sqrt(-4*pow(s[2]*s[2]-3*s[1]*s[3]+12*s[0]*s[4],3)+p1*p1);
+    p3=(s[2]*s[2]-3*s[1]*s[3]+12*s[0]*s[4])/(3*s[0]*pow(p2,(double)1/3))+pow(p2,(double)1/3)/(3*s[0]);
+    p4=sqrt(s[1]*s[1]/(4*s[0]*s[0])-2*s[2]/(3*s[0])+p3);
+    p5=s[1]*s[1]/(2*s[0]*s[0])-4*s[2]/(3*s[0])-p3;
+    p6=(-s[1]*s[1]*s[1]/(s[0]*s[0]*s[0])+4*s[1]*s[2]/(s[0]*s[0])-8*s[3]/s[0])/(4*p4);
+
+    vector<pair<double, double> > xy(4);
+
+    xy[0].first=-s[1]/(4*s[0])-p4/2-sqrt(p5-p6)/2;
+    xy[0].second=1;
+
+    cout<<xy[0].first <<endl;
+
+    xy[1].first=-s[1]/(4*s[0])-p4/2+sqrt(p5-p6)/2;
+    xy[1].second=1;
+
+    cout<<xy[1].first <<endl;
+
+    xy[2].first=-s[1]/(4*s[0])+p4/2-sqrt(p5-p6)/2;
+    xy[2].second=1;
+
+    cout<<xy[2].first <<endl;
+
+    xy[3].first=-s[1]/(4*s[0])+p4/2+sqrt(p5-p6)/2;
+    xy[3].second=1;
+
+    cout<<xy[3].first <<endl;
+
+    return xy;
+
+
+}
+
+vector<vector<double> > uradi_matu(double aa, double bb, double cosuv, double cosuw, double cosvw, double ab, double bc, double ac)
+{
+    vector<vector<double> > dist(4, vector<double> (3));
+
+    double a[6];
+    double b[6];
+
+    a[0]=1-aa;
+    a[1]=-aa;
+    a[2]=2*aa*cosuv;
+    a[3]=-cosvw;
+    a[4]=0;
+    a[5]=1;
+
+    b[0]=-bb;
+    b[1]=1-bb;
+    b[2]=2*bb*cosuv;
+    b[3]=0;
+    b[4]=-cosuw;
+    b[5]=1;
+
+    vector<pair<double, double> > xy;
+
+    xy = resi_sistem(a,b);
+
+    for (int i=0; i<4; i++)
+    {
+        dist[i][2] = ab/sqrt(xy[i].second*xy[i].second+xy[i].first*xy[i].first-2*xy[i].second*xy[i].first*cosuv);
+        dist[i][1] = dist[i][2]*xy[i].first;
+        dist[i][0] = dist[i][2]*xy[i].second;
+
+        cout <<dist[i][0] <<" " <<dist[i][1] <<" " <<dist[i][2] <<endl;
+    }
+
+    return dist;
+}
+
 
 
