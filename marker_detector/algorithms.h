@@ -19,4 +19,7 @@ vector<list<coord> > douglaspeucker(vector<vector<int> >& gimage, int width, int
 
 vector<vector<int> > bacimrezu(vector<vector<int> >& gimage, int minx, int miny, int maxx, int maxy, list<coord> rect);
 
+vector<vector<double> > uradi_matu(double aa, double bb, double cosuv, double cosuw, double cosvw, double ab, double bc, double ac);
+
+
 #endif // ALGORITHMS_H_INCLUDED

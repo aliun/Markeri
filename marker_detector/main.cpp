@@ -20,8 +20,8 @@ int width, height, dim, kvad, maks, minim, localtres ;
 vector<vector<vector<unsigned char> > > image;
 vector<vector<int> > gimage, gimage2;
 
-const char *location = "F:\\Projects\\Unfinished\\markeri\\s.bmp";
-const char *locationn = "F:\\Projects\\Unfinished\\markeri\\img.bmp" ;
+const char *location = "F:\\Projects\\Unfinished\\markeri\\Markeri\\markeri\\markerilabelirano\\5brt1.bmp";
+const char *locationn = "F:\\Projects\\Unfinished\\markeri\\Markeri\\img.bmp" ;
 
 //const char *location = "E:\\bmpmarkweri\\s.bmp";
 //const char *locationn = "E:\\bmpmarkweri\\img.bmp";
@@ -175,7 +175,7 @@ int main()
             int bit;
 
             stringstream ss;
-            ss <<"F:\\Projects\\Unfinished\\markeri\\recnik\\" <<k <<".txt";
+            ss <<"F:\\Projects\\Unfinished\\markeri\\Markeri\\kodovi\\txt\\" <<k <<".txt";
             const char* str = ss.str().c_str();
 
 
@@ -213,6 +213,18 @@ int main()
 
         if (rast_min<10)
         cout <<min_index <<endl;
+
+        //////////////////////////////////////////////////////////////
+
+        vector<vector<double> > dist;
+
+        //double a=(bc/ab), b=(ac/ab);
+        dist = uradi_matu(1, 1, 0.995, 0.995, 0.995, 1, 1, 1);//(a,b,cosuv,cosuw,cosvw,ab,bc,ac);
+
+
+
+
+
     }
 
 

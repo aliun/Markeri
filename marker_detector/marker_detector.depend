@@ -102,3 +102,40 @@
 	<cmath>
 	<iostream>
 
+1501244572 source:f:\projects\unfinished\markeri\markeri\marker_detector\algorithms.cpp
+	<vector>
+	<list>
+	<cmath>
+	<iostream>
+
+1500830325 source:f:\projects\unfinished\markeri\markeri\marker_detector\file management.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	<cmath>
+	<cstring>
+	<vector>
+	<fstream>
+
+1501244083 source:f:\projects\unfinished\markeri\markeri\marker_detector\main.cpp
+	<iostream>
+	<list>
+	<fstream>
+	<stdlib.h>
+	<iostream>
+	<time.h>
+	<cmath>
+	<cstring>
+	<vector>
+	<fstream>
+	<sstream>
+	"file management.h"
+	"algorithms.h"
+
+1500744957 f:\projects\unfinished\markeri\markeri\marker_detector\file management.h
+
+1501242600 f:\projects\unfinished\markeri\markeri\marker_detector\algorithms.h
+	<vector>
+
