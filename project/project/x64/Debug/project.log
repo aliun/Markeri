@@ -1,8 +1,8 @@
 ﻿  main.cpp
-c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(271): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(272): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(354): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(355): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(356): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(293): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(294): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(375): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(376): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tonic\onedrive\documents\visual studio 2015\projects\project\project\main.cpp(377): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   project.vcxproj -> C:\Users\tonic\OneDrive\documents\visual studio 2015\Projects\project\x64\Debug\project.exe
   project.vcxproj -> C:\Users\tonic\OneDrive\documents\visual studio 2015\Projects\project\x64\Debug\project.pdb (Full PDB)

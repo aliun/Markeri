@@ -23,7 +23,15 @@ int width, height, dim, kvad, maks, minim, localtres;
 vector<vector<vector<unsigned char> > > image;
 vector<vector<int> > gimage, gimage2;
 
-const char *location = "F:\\Projects\\Unfinished\\markeri\\Markeri\\markeri\\markerilabelirano\\5brt2.bmp";
+
+int trashholdivice = 10;
+int trashholdrast = 5;
+int binc = 15;
+int bintrash = 40;
+double epsdaglas = 5;
+
+
+const char *location = "F:\\Projects\\Unfinished\\markeri\\Markeri\\baza\\slike\\20.bmp";
 const char *locationn = "F:\\Projects\\Unfinished\\markeri\\Markeri\\img.bmp";
 
 //const char *location = "E:\\bmpmarkweri\\s.bmp";
@@ -47,12 +55,13 @@ int main(int argv, char** argc)
 			matricakamere >> cameraMatrix.at<double>(i,j);
 		}
 
-
+	cout << cameraMatrix << endl;
 
 	Mat distCoeffs(5, 1, DataType<double>::type);
 	for (int i=0; i<5; i++) distkoef >> distCoeffs.at<double>(i);
 	
 	readBMP(location, width, height, image);
+
 
 	Mat imagemat(width, height, CV_8UC3);
 
@@ -75,8 +84,9 @@ int main(int argv, char** argc)
 	for (int i = 0; i<width; i++)
 		for (int j = 0; j <height; j++)
 			for (int k = 0; k<3; k++)
-				image[i][j][k] = undistortedimage.at<Vec3b>(i, j)[k];
+				//image[i][j][k] = undistortedimage.at<Vec3b>(i, j)[k];
 		
+
 
 
 	gimage.resize(width);
@@ -98,7 +108,8 @@ int main(int argv, char** argc)
 
 
 
-	binarization(gimage, width, height, 40, 45);
+	binarization(gimage, width, height, bintrash, binc);
+
 
 
 	for (int x = 0; x<width; x++)
@@ -134,9 +145,13 @@ int main(int argv, char** argc)
 
 	suzukiabe(gimage, width, height, 8);
 
-	vector<list<coord> > rects;
-	rects = douglaspeucker(gimage, width, height);
 
+
+	vector<list<coord> > rects;
+	rects = douglaspeucker(gimage, width, height, epsdaglas); 
+
+	
+	
 
 	vector<vector<vector<unsigned char> > > crpimage;
 
@@ -145,12 +160,13 @@ int main(int argv, char** argc)
 
 	coord koord;
 
-	int trashhold = 10;
 
 
 	int min_index;
 
 	bool indikator;
+
+	//cout << rects.size();
 	for (int i = 0; i<rects.size(); i++)
 	{
 		indikator = true;
@@ -159,8 +175,10 @@ int main(int argv, char** argc)
 
 			koord = rects[i].front();
 
+			//cout << koord.x << " " << koord.y <<endl;
+
 			if (sqrt((rects[i].front().x - rects[i].back().x)*(rects[i].front().x - rects[i].back().x) +
-				(rects[i].front().y - rects[i].back().y)*(rects[i].front().y - rects[i].back().y))<trashhold)
+				(rects[i].front().y - rects[i].back().y)*(rects[i].front().y - rects[i].back().y))<trashholdivice)
 			{
 				indikator = false;
 				break;
@@ -208,6 +226,7 @@ int main(int argv, char** argc)
 			}
 		}
 
+
 		vector<vector<int> > marker;//(8, vector<int> (8));
 
 		marker = bacimrezu(gimage2, minx, miny, maxx, maxy, rects[i]);
@@ -243,7 +262,7 @@ int main(int argv, char** argc)
 				//cout <<endl;
 			}
 
-			//cout <<endl <<rast;
+			//cout <<endl <<rast <<endl;
 
 			if (rast <= rast_min)
 			{
@@ -256,7 +275,7 @@ int main(int argv, char** argc)
 			markeri.close();
 		}
 
-		if (rast_min < 5)
+		if (rast_min < trashholdrast)
 		{
 
 			vector<Point2f> imagePoints(4);
@@ -267,6 +286,9 @@ int main(int argv, char** argc)
 			for (int j = 0; j < 4; j++)
 			{
 				koord = rects[i].front();
+
+
+				cout << koord.x << " " << koord.y << endl;
 
 				imagePoints[j].x = koord.x;
 				imagePoints[j].y = koord.y;
@@ -347,13 +369,15 @@ int main(int argv, char** argc)
 
 			double x1, x2, x3;
 
-			for (int k = 0; k < 4; k++)
+			for (int j = 0; j < 4; j++)
 			{
 				recnik >> x1 >> x2 >> x3;
+				objectPoints[j].x = x1;
+				objectPoints[j].y = x2;
+				objectPoints[j].z = x3;
 
-				objectPoints[k].x = x1;
-				objectPoints[k].y = x2;
-				objectPoints[k].z = x3;
+
+				cout << objectPoints[j].x << " " << objectPoints[j].y << " " << objectPoints[j].z << endl;
 
 			}
 
@@ -404,7 +428,7 @@ int main(int argv, char** argc)
 			Mat dstCoeffs(5, 1, DataType<double>::type);
 			for (int i = 0; i < 5; i++) dstCoeffs.at<double>(i) = 0;
 
-			if (solvePnP(objectPoints, imagePoints, cameraMatrix, dstCoeffs, rvec, tvec))
+			if (solvePnP(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, false, CV_P3P))
 			{
 				cout << rvec << endl;
 				cout << tvec << endl;
@@ -415,9 +439,6 @@ int main(int argv, char** argc)
 	}
 
 
-
-
-
 	/*
 	for (int x = 0; x<width; x++)
 	{
@@ -425,7 +446,10 @@ int main(int argv, char** argc)
 		{
 			//if ((gimage[x][y]!=1)&&(gimage[x][y]!=0)) {image[x][y][0]=255; image[x][y][1]=255; image[x][y][2]=255;}
 			//else {image[x][y][0]=0; image[x][y][1]=0; image[x][y][2]=0;}
-			if (gimage2[x][y] == -1) { image[x][y][0] = 0; image[x][y][1] = 255; image[x][y][2] = 0; }
+			if (gimage[x][y] == -2) { image[x][y][0] = 0; image[x][y][1] = 255; image[x][y][2] = 0; }
+			else {
+				//image[x][y][0] = gimage2[x][y]*255 ; image[x][y][1] = gimage2[x][y] * 255; image[x][y][2] = gimage2[x][y] *255;
+			}
 			//else if (gimage[x][y]>1) {image[x][y][0]=255; image[x][y][1]=255; image[x][y][2]=255;}
 			//image[x][y][0]=gimage2[x][y]; image[x][y][1]=gimage2[x][y]; image[x][y][2]=gimage2[x][y];
 
@@ -435,9 +459,8 @@ int main(int argv, char** argc)
 
 	writeBMP(locationn, width, height, image);
 
+
 	*/
-
-
 
 
 	waitKey();

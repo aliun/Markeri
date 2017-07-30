@@ -15,7 +15,7 @@ void binarization(vector<vector<int> >& gimage, int width, int height, int dim, 
 
 void suzukiabe(vector<vector<int> >& gimage, int width, int height, int connected_case);
 
-vector<list<coord> > douglaspeucker(vector<vector<int> >& gimage, int width, int height);
+vector<list<coord> > douglaspeucker(vector<vector<int> >& gimage, int width, int height, double eps);
 
 vector<vector<int> > bacimrezu(vector<vector<int> >& gimage, int minx, int miny, int maxx, int maxy, list<coord> rect);
 

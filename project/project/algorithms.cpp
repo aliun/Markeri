@@ -2,6 +2,7 @@
 #include <list>
 #include <cmath>
 #include <iostream>
+#include <queue>
 
 using namespace std;
 
@@ -305,37 +306,62 @@ void suzukiabe(vector<vector<int> >& gimage, int width, int height, int connecte
     }
 }
 
-
-void dfs(int marker, list<coord>& dots, int& dotsnumber, int x, int y, int x1, int y1, vector<vector<int> >& gimage, int width, int height)
+queue<pair<coord,coord> > red;
+void bfs(int marker, list<coord>& dots, int& dotsnumber, vector<vector<int> >& gimage, int width, int height)
 {
-    gimage[x][y] = marker;
+	int x, y, x1, y1;
+	int neighnumb;
+	coord pixel;
+	pair<coord, coord> aaaa;
 
-    int neighnumb=8;
-    coord pixel;
+	while (!red.empty())
+	{
+		x = red.front().first.x;
+		y = red.front().first.y;
 
-    if ((x==0)&&(x==width-1)) neighnumb-=3;
-    if ((y==0)&&(y==height-1)) neighnumb-=3;
-    if (neighnumb==2) neighnumb=3;
+		x1 = red.front().second.x;
+		y1 = red.front().second.y;
+
+		red.pop();
+
+		gimage[x][y] = marker;
+
+		neighnumb = 8;
+
+		if ((x == 0) && (x == width - 1)) neighnumb -= 3;
+		if ((y == 0) && (y == height - 1)) neighnumb -= 3;
+		if (neighnumb == 2) neighnumb = 3;
 
 
-    pixel.x = x1;
-    pixel.y = y1;
+		pixel.x = x1;
+		pixel.y = y1;
 
 
-    for (int i=0; i<neighnumb; i++)
-        if (gimage[pixel.x][pixel.y]!=-1)
-        {
-            pixel = clockwise_next(x, y, pixel.x, pixel.y, width, height);
-        }
-        else
-        {
-            dotsnumber++;
-            dots.push_back(pixel) ;
 
-            dfs(marker, dots, dotsnumber, pixel.x, pixel.y, x, y, gimage, width, height);
-            break;
-        }
+		for (int i = 0; i < neighnumb; i++)
+			if (gimage[pixel.x][pixel.y] != -1)
+			{
+				pixel = clockwise_next(x, y, pixel.x, pixel.y, width, height);
+			}
+			else
+			{
+				dotsnumber++;
+				dots.push_back(pixel);
 
+				aaaa.first.x = pixel.x;
+				aaaa.first.y = pixel.y;
+
+				aaaa.second.x = x;
+				aaaa.second.y = y;
+
+
+				red.push(aaaa);
+				break;
+				//dfs(marker, dots, dotsnumber, pixel.x, pixel.y, x, y, gimage, width, height);
+
+			}
+	}
+	
 
     /*
     if ((dots[dotsnumber-1].x>0)&&(gimage[dots[dotsnumber-1].x-1][dots[dotsnumber-1].y]==-1))
@@ -498,7 +524,7 @@ list<coord> pravidaglas(list<coord>& dots, list<coord>::iterator l, list<coord>:
     }
 }
 
-vector<list<coord> > douglaspeucker(vector<vector<int> >& gimage, int width, int height)
+vector<list<coord> > douglaspeucker(vector<vector<int> >& gimage, int width, int height, double eps)
 {
     vector<list<coord> > rects;
 
@@ -506,142 +532,168 @@ vector<list<coord> > douglaspeucker(vector<vector<int> >& gimage, int width, int
     list<coord>::iterator it;
     int dotsnumber;
 
-    double eps=20;
 
     coord poc;
 
-    int marker = 1;
-    for (int y=0; y<height; y++)
-        for (int x=0; x<width; x++)
-        {
-            if (gimage[x][y]==-1)
-            {
-                marker++;
+    int marker = 1; 
+	int x, y, y0 = -1, x0 = 0, sum = -1;
+	do
+	{
+		sum++;
+
+		if (sum > height - 1) x0++;
+		else y0++;
+
+		//cout << x0 << " " << y0 << endl;
+		
+		for (y = y0, x = x0; ((y >= 0) && (x < width)); y--, x++)
+		{
+			//cout << x << " " << y << endl;
+
+			if (gimage[x][y] == -1)
+			{
+				marker++;
 
 
-                poc.x = x;
-                poc.y = y;
-                dots.push_back(poc);
-                dotsnumber=1;
+				poc.x = x;
+				poc.y = y;
+				dots.push_back(poc);
+				dotsnumber = 1;
 
-                poc.x++;
-                poc.y--;
-                poc = clockwise_next(x, y, poc.x, poc.y, width, height);
-
-
-                dfs(marker, dots, dotsnumber, x, y, poc.x, poc.y, gimage, width, height);
+				poc.x--;
+				poc.y--;
+				poc = clockwise_next(x, y, poc.x, poc.y, width, height);
 
 
-                /*
-                dots.erase(dots.begin(),dots.end());
-                poc.x = 3;
-                poc.y = 3;
-                dots.push_back(poc);
-                poc.x = 7;
-                poc.y = 7;
-                dots.push_back(poc);
-                poc.x = 10;
-                poc.y = 6;
-                dots.push_back(poc);
-                poc.x = 13;
-                poc.y = 5;
-                dots.push_back(poc);
-                poc.x = 15;
-                poc.y = 8;
-                dots.push_back(poc);
-                poc.x = 16;
-                poc.y = 2;
-                dots.push_back(poc);
-                poc.x = 19;
-                poc.y = 4;
-                dots.push_back(poc);
-                poc.x = 21;
-                poc.y = 7;
-                dots.push_back(poc);
-                */
+				pair<coord, coord> aaaa;
+				aaaa.first.x = x;
+				aaaa.first.y = y;
+
+				aaaa.second.x = poc.x;
+				aaaa.second.y = poc.y;
+
+				red.push(aaaa);
 
 
-                if (dotsnumber>5)
-                {
-
-                    poc=dots.front();
-                    dots.pop_front();
-                    dots.push_back(dots.front());
-                    dots.push_front(poc);
-
-                    it=dots.begin();
-                    for (int k=0; k<dotsnumber; k++) it++;
-
-                    /*
-                    cout <<endl <<(*dots.begin()).x <<" " <<(*dots.begin()).y;
-                    cout <<endl <<(*it).x <<" " <<(*it).y;
-                    cout <<endl;
-                    */
-
-                    dots = pravidaglas(dots, dots.begin(), it, eps);
-
-                }
-
-                int siz=dots.size();
-                double rastmin, rast;
-                int index;
-
-                if (siz==5)
-                {
-                    dots.pop_back();
-
-                    rastmin=abs(-dots.front().y-dots.front().x);
-                    index=0;
-
-                    for (int i=0; i<4; i++)
-                    {
-                        rast=abs(-dots.front().y-dots.front().x);
-                        if (rast<rastmin)
-                        {
-                            rastmin=rast;
-                            index=i;
-                        }
-
-                        poc=dots.front();
-                        dots.pop_front();
-                        dots.push_back(poc);
-                    }
+				bfs(marker, dots, dotsnumber, gimage, width, height);
 
 
+				/*
+				dots.erase(dots.begin(),dots.end());
+				poc.x = 3;
+				poc.y = 3;
+				dots.push_back(poc);
+				poc.x = 7;
+				poc.y = 7;
+				dots.push_back(poc);
+				poc.x = 10;
+				poc.y = 6;
+				dots.push_back(poc);
+				poc.x = 13;
+				poc.y = 5;
+				dots.push_back(poc);
+				poc.x = 15;
+				poc.y = 8;
+				dots.push_back(poc);
+				poc.x = 16;
+				poc.y = 2;
+				dots.push_back(poc);
+				poc.x = 19;
+				poc.y = 4;
+				dots.push_back(poc);
+				poc.x = 21;
+				poc.y = 7;
+				dots.push_back(poc);
+				*/
 
-                    for (int i=0; i<index; i++)
-                    {
-                        poc=dots.front();
-                        dots.pop_front();
-                        dots.push_back(poc);
-                    }
 
-                    rects.push_back(dots);
+				if (dotsnumber>5)
+				{
 
-                    //cout <<endl;
+					poc = dots.front();
+					dots.pop_front();
+					dots.push_back(dots.front());
+					dots.push_front(poc);
 
-                    for (int i=0; i<4; i++)
-                    {
-                        poc=dots.front();
-                        dots.pop_front();
+					it = dots.begin();
+					for (int k = 0; k<dotsnumber; k++) it++;
 
-                        //cout <<endl <<poc.x <<" " <<poc.y;
+					/*
+					cout <<endl <<(*dots.begin()).x <<" " <<(*dots.begin()).y;
+					cout <<endl <<(*it).x <<" " <<(*it).y;
+					cout <<endl;
+					*/
 
+					dots = pravidaglas(dots, dots.begin(), it, eps);
 
-                        gimage[poc.x][poc.y]=-2;
+				}
 
-                    }
-                }
+				int siz = dots.size();
+				double rastmin, rast;
+				int index;
 
+				if (siz == 5)
+				{
+					dots.pop_back();
 
-                dots.erase(dots.begin(),dots.end());
+					/*
+					rastmin = abs(-dots.front().y - dots.front().x);
+					index = 0;
 
+					for (int i = 0; i<4; i++)
+					{
+						rast = abs(-dots.front().y - dots.front().x);
+						if (rast<rastmin)
+						{
+							rastmin = rast;
+							index = i;
+						}
 
-            }
+						poc = dots.front();
+						dots.pop_front();
+						dots.push_back(poc);
+					}
 
 
 
-        }
+					for (int i = 0; i<index; i++)
+					{
+						poc = dots.front();
+						dots.pop_front();
+						dots.push_back(poc);
+					}
+
+
+					*/
+					//cout <<endl;
+
+
+					rects.push_back(dots);
+
+					for (int i = 0; i<4; i++)
+					{
+						poc = dots.front();
+						dots.pop_front();
+
+						//cout <<endl <<poc.x <<" " <<poc.y;
+
+
+						gimage[poc.x][poc.y] = -2;
+
+					}
+
+					//cout << endl;
+
+					
+				}
+
+
+				dots.erase(dots.begin(), dots.end());
+
+			}
+		}
+
+	} while (!((x0 == width - 1) && (y0 == height - 1)));
 
     return rects;
 }
@@ -1045,11 +1097,16 @@ vector<vector<int> > bacimrezu(vector<vector<int> >& gimage, int minx, int miny,
     }
 
     for (int i=0; i<8; i++)
+	{ 
         for (int j=0; j<8; j++)
         {
             if (kecevinule[i][j].first>kecevinule[i][j].second) mreza[i][j]=0;
             else mreza[i][j]=1;
+
+			//cout << mreza[i][j] << " ";
         }
+		//cout << endl;
+	}
 
 
     return mreza;
