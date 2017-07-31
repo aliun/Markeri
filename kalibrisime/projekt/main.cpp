@@ -1,17 +1,14 @@
-﻿#include "opencv2\core.hpp"
- #include "opencv2\imgcodecs.hpp"
-#include "opencv2\imgproc.hpp"
-#include "opencv2\highgui.hpp"
-#include "opencv2\calib3d.hpp"
+﻿#include "opencv2/opencv.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
 #include <iostream>
 #include <sstream>
 #include <fstream>
 
 using namespace std;
-using namespace cv;        ///     \\\\\\\\\\\\\
+using namespace cv;
 
-const float calibrationSquareDimension = 0.025;
+const float calibrationSquareDimension = 1;
 const float arcuoSquareDimension = 1;
 const Size chessBoardDimension = Size(9, 6);
 
@@ -28,10 +25,10 @@ void createKnownBoardPosition(Size boardSize, float squareEdgeLength, vector<Poi
 
 void getChessBoardCorners(vector<Mat> images, vector<vector<Point2f> >& allFoundCorners, bool showResult = false)
 {
-	for (vector<Mat>::iterator iter = images.begin(); iter!= images.end(); iter++)
+	for (vector<Mat>::iterator i = images.begin(); i != images.end(); i++)
 	{
 		vector<Point2f> pointBuf;
-		bool found = findChessboardCorners(*iter, Size(9, 6), pointBuf, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE);
+		bool found = findChessboardCorners(*i, Size(9, 6), pointBuf, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE);
 
 		if (found)
 		{
@@ -40,13 +37,12 @@ void getChessBoardCorners(vector<Mat> images, vector<vector<Point2f> >& allFound
 
 		if (showResult)
 		{
-			drawChessboardCorners(*iter, Size(9, 6), pointBuf, found);
-			imshow("lepaslika", *iter);
+			drawChessboardCorners(*i, Size(9, 6), pointBuf, found);
+			imshow("", *i);
 			waitKey(0);
 		}
 	}
 }
-
 void cameraCalibration(vector<Mat> calibrationImages, Size boardSize, float squareEdgeLength, Mat& cameraMatrix, Mat& distortionCoeff, double& calibError)
 {
 	vector<vector<Point2f> > checkerboardImageSpacePoints;
@@ -73,8 +69,6 @@ bool saveCameraCalibration(Mat cameraMatrix, Mat distortionCoeff, double calibEr
 	fs << "cameraMatrix" << cameraMatrix;
 	fs << "distortionCoeff" << distortionCoeff;
 	fs << "calibError" << calibError;
-	fs ["cameraMatrix"] >> cameraMatrix;
-	
 	fs.release();
 
 
@@ -84,9 +78,6 @@ bool saveCameraCalibration(Mat cameraMatrix, Mat distortionCoeff, double calibEr
 	{
 		uint16_t rows = cameraMatrix.rows;
 		uint16_t columns = cameraMatrix.cols;
-
-		outStream << rows << endl;
-		outStream << columns << endl;
 
 		for (int r = 0; r<rows; r++)
 		{
@@ -99,9 +90,6 @@ bool saveCameraCalibration(Mat cameraMatrix, Mat distortionCoeff, double calibEr
 
 		rows = distortionCoeff.rows;
 		columns = distortionCoeff.cols;
-
-		outStream << rows << endl;
-		outStream << columns << endl;
 
 		for (int r = 0; r<rows; r++)
 		{
@@ -117,56 +105,8 @@ bool saveCameraCalibration(Mat cameraMatrix, Mat distortionCoeff, double calibEr
 	return false;
 }
 
-bool loadCameraCalibration(string name, Mat& cameraMatrix, Mat& distanceCoefficients)
-{
 
-	ifstream inStream(name);
-	if (inStream)(name);
-	if (inStream)
-	{
-		uint16_t rows;
-		uint16_t colums;
-
-		inStream >> rows;
-		inStream >> colums;
-
-		cameraMatrix = Mat(Size(colums, rows), CV_64F);
-
-		for (int r = 0; r < rows; r++){
-
-			for (int c = 0; c < colums; c++) {
-
-				double read = 0.0f;	
-				inStream >> read;
-				cameraMatrix.at<double>(r, c) = read;
-				cout << cameraMatrix.at<double>(r, c) << "\n";
-			}
-		}
-		inStream >> rows;
-		inStream >> colums;
-
-		distanceCoefficients = Mat::zeros(rows, colums, CV_64F);
-		
-		for (int r = 0; r < rows; r++) {
-
-			for (int c = 0; c < colums; c++) {
-
-				double read = 0.0f;
-				inStream >> read;
-				distanceCoefficients.at <double>(r, c) = read;
-				cout << distanceCoefficients.at<double>(r, c) << "\n";
-			}
-
-		}
-		inStream.close();
-		return true;
-	}
-	return false; 
-
-
-}
-
-int main(int argv, char** argc)
+int main(int argc, char** argv)
 {
 	Mat frame;
 	Mat drawToFrame;
@@ -178,8 +118,33 @@ int main(int argv, char** argc)
 	vector<Mat> savedImages;
 	vector<vector<Point2f> > markerCorners, rejectedCandidates;
 
-	VideoCapture vid(0);
+	VideoCapture vid(1);
 
+	/*Mat temp = imread("/images/left01.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left02.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left03.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left04.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left05.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left06.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left07.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left08.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left09.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left10.jpg", 0);
+	savedImages.push_back(temp);
+	temp = imread("/images/left11.jpg", 0);
+	savedImages.push_back(temp);
+
+	cameraCalibration(savedImages, chessBoardDimension, calibrationSquareDimension, cameraMatrix, distortionCoeff);
+	saveCameraCalibration(cameraMatrix, distortionCoeff);*/
 
 	if (!vid.isOpened())
 	{
@@ -187,7 +152,7 @@ int main(int argv, char** argc)
 	}
 
 	int framesPerSecond = 20;
-	 
+
 
 	namedWindow("Webcam", CV_WINDOW_AUTOSIZE);
 
@@ -240,8 +205,6 @@ int main(int argv, char** argc)
 			break;
 		}
 
-		
-	}          
- 	cout << cameraMatrix;
-	waitKey(5000);
+
+	}
 }
