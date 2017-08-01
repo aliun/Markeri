@@ -8,7 +8,7 @@
 using namespace std;
 using namespace cv;
 
-const float calibrationSquareDimension = 1;
+const float calibrationSquareDimension = 0.0243f;
 const float arcuoSquareDimension = 1;
 const Size chessBoardDimension = Size(9, 6);
 
@@ -44,6 +44,32 @@ void getChessBoardCorners(vector<Mat> images, vector<vector<Point2f> >& allFound
 	}
 }
 
+double computeReprojectionErrors(const vector<vector<Point3f> >& objectPoints,
+	const vector<vector<Point2f> >& imagePoints,
+	const vector<Mat>& rvecs, const vector<Mat>& tvecs,
+	const Mat& cameraMatrix, const Mat& distCoeffs,
+	vector<float>& perViewErrors)
+{
+	vector<Point2f> imagePoints2;
+	int i, totalPoints = 0;
+	double totalErr = 0, err;
+	perViewErrors.resize(objectPoints.size());
+
+	for (i = 0; i < (int)objectPoints.size(); ++i)
+	{
+		projectPoints(Mat(objectPoints[i]), rvecs[i], tvecs[i], cameraMatrix,  // project
+			distCoeffs, imagePoints2);
+		err = norm(Mat(imagePoints[i]), Mat(imagePoints2), CV_L2);              // difference
+
+		int n = (int)objectPoints[i].size();
+		perViewErrors[i] = (float)std::sqrt(err*err / n);                        // save for this view
+		totalErr += err*err;                                             // sum it up
+		totalPoints += n;
+	}
+
+	return std::sqrt(totalErr / totalPoints);              // calculate the arithmetical mean
+}
+
 void cameraCalibration(vector<Mat> calibrationImages, Size boardSize, float squareEdgeLength, Mat& cameraMatrix, Mat& distortionCoeff, double& calibError)
 {
 	vector<vector<Point2f> > checkerboardImageSpacePoints;
@@ -60,8 +86,14 @@ void cameraCalibration(vector<Mat> calibrationImages, Size boardSize, float squa
 	distortionCoeff = Mat::zeros(8, 1, CV_64F);
 
 
-  //calibrateCamera(worldSpaceCornerPoints, checkerboardImageSpacePoints, boardSize, cameraMatrix, distortionCoeff, rVectors, tVectors);
-	printf("%f", calibError);
+	calibrateCamera(worldSpaceCornerPoints, checkerboardImageSpacePoints, boardSize, cameraMatrix, distortionCoeff, rVectors, tVectors);
+	
+	vector<float> perViewError;
+	calibError = computeReprojectionErrors(worldSpaceCornerPoints, checkerboardImageSpacePoints, rVectors, tVectors, cameraMatrix, distortionCoeff, perViewError);
+
+	
+
+	//printf("%f", calibError);
 }
 
 bool saveCameraCalibration(Mat cameraMatrix, Mat distortionCoeff, double calibError)
@@ -74,7 +106,7 @@ bool saveCameraCalibration(Mat cameraMatrix, Mat distortionCoeff, double calibEr
 
 
 	//_______________________________________________________________________________________________________________________________________________
-	ofstream outStream("Rezultati.txt");
+	ofstream outStream("mama.txt");
 	if (outStream)
 	{
 		uint16_t rows = cameraMatrix.rows;
@@ -100,6 +132,7 @@ bool saveCameraCalibration(Mat cameraMatrix, Mat distortionCoeff, double calibEr
 				outStream << value << endl;
 			}
 		}
+		outStream << calibError << endl;
 		outStream.close();
 		return true;
 	}
@@ -130,9 +163,9 @@ int main(int argc, char** argv)
 
 	VideoCapture vid(0);
 
-	ind = vid.set(CV_CAP_PROP_FRAME_WIDTH, 1600);
+	ind = vid.set(CV_CAP_PROP_FRAME_WIDTH, 640);
 
-	ind = vid.set(CV_CAP_PROP_FRAME_HEIGHT, 1200);
+	ind = vid.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 
 
 
@@ -142,10 +175,17 @@ int main(int argc, char** argv)
 		return 0; //////000000 po tutu
 	}
 
-	int framesPerSecond = 2; 
+	int framesPerSecond = 20; 
 
 
 	namedWindow("Webcam", CV_WINDOW_AUTOSIZE);
+
+
+	stringstream ss;
+	vector<int> compression_params;
+	compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+	compression_params.push_back(9);
+
 
 	while (true)
 	{
@@ -156,6 +196,8 @@ int main(int argc, char** argv)
 
 		vector<Vec2f> foundPoints;
 		bool found = false;
+
+		
 
 		found = findChessboardCorners(frame, chessBoardDimension, foundPoints, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE);
 		frame.copyTo(drawToFrame);
@@ -182,15 +224,23 @@ int main(int argc, char** argv)
 			//cout << "cuvam_pizdo";
 			//printf("Filecreadddddted");
 
-			if (found)
+			if (true)//(found)
 				{
+				ss << savedImages.size()+1 << ".png";
+				//frame = imread(ss.str());
+
 				Mat temp;
 				frame.copyTo(temp);
 				savedImages.push_back(temp);
 				cout << "cuvam_pizdo";
 				
+				
 				cout << savedImages.size() ;
 				cout << endl;
+				imwrite(ss.str(), temp, compression_params);
+
+				ss.clear();
+				ss.str(string());
 				}
 
 			break;
@@ -212,7 +262,7 @@ int main(int argc, char** argv)
 			break;
 			}
 
-
+		
 	}
 
 }
