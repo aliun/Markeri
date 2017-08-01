@@ -199,9 +199,9 @@ int main(int argc, char** argv)
 
 		
 
-		found = findChessboardCorners(frame, chessBoardDimension, foundPoints, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE);
-		frame.copyTo(drawToFrame);
-		drawChessboardCorners(drawToFrame, chessBoardDimension, foundPoints, found);
+		//found = findChessboardCorners(frame, chessBoardDimension, foundPoints, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE);
+		//frame.copyTo(drawToFrame);
+		//drawChessboardCorners(drawToFrame, chessBoardDimension, foundPoints, found);
 
 		if (found)
 			{
@@ -226,7 +226,7 @@ int main(int argc, char** argv)
 
 			if (true)//(found)
 				{
-				ss << savedImages.size()+1 << ".png";
+				ss << savedImages.size()+197+1 << ".png";
 				//frame = imread(ss.str());
 
 				Mat temp;
@@ -235,9 +235,29 @@ int main(int argc, char** argv)
 				cout << "cuvam_pizdo";
 				
 				
-				cout << savedImages.size() ;
+				cout << savedImages.size() +197;
 				cout << endl;
 				imwrite(ss.str(), temp, compression_params);
+
+				ss.clear();
+				ss.str(string());
+
+
+				ss << savedImages.size()+197 << ".txt";
+				
+				
+				ofstream fajl(ss.str());
+				
+				double a;
+				cin >> a;
+				fajl << a;
+				cin >> a;
+				fajl << " " << a << " " <<7.2 <<" ";
+				cin >> a;
+				fajl << a;
+
+				fajl.close();
+				
 
 				ss.clear();
 				ss.str(string());
