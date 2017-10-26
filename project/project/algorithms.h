@@ -2,14 +2,18 @@
 #define ALGORITHMS_H_INCLUDED
 
 #include <vector>
+#include <opencv2\opencv.hpp>
 
 using namespace std;
+using namespace cv;
 
 struct coord
 {
     int x,y;
 };
 
+
+Vec3f rotationMatrixToEulerAngles(Mat &R);
 
 void binarization(vector<vector<int> >& gimage, int width, int height, int dim, int c);
 

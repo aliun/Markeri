@@ -1,3 +1,4 @@
+#include <opencv2\opencv.hpp>
 #include <vector>
 #include <list>
 #include <cmath>
@@ -5,6 +6,7 @@
 #include <queue>
 
 using namespace std;
+using namespace cv;
 
 struct coord
 {
@@ -107,6 +109,34 @@ coord counterclockwise_next(int x, int y, int x1, int y1, int width, int height)
     return pix;
 }
 
+
+Vec3f rotationMatrixToEulerAngles(Mat &R)
+{
+
+
+
+	float sy = sqrt(R.at<double>(0, 0) * R.at<double>(0, 0) + R.at<double>(1, 0) * R.at<double>(1, 0));
+
+	bool singular = sy < 1e-6; // If
+
+	float x, y, z;
+	if (!singular)
+	{
+		x = atan2(R.at<double>(2, 1), R.at<double>(2, 2));
+		y = atan2(-R.at<double>(2, 0), sy);
+		z = atan2(R.at<double>(1, 0), R.at<double>(0, 0));
+	}
+	else
+	{
+		x = atan2(-R.at<double>(1, 2), R.at<double>(1, 1));
+		y = atan2(-R.at<double>(2, 0), sy);
+		z = 0;
+	}
+	return Vec3f(x, y, z);
+
+
+
+}
 
 void binarization(vector<vector<int> >& gimage, int width, int height, int dim, int c)
 {

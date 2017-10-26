@@ -151,11 +151,19 @@
   <ItemGroup>
     <ClCompile Include="algorithms.cpp" />
     <ClCompile Include="file management.cpp" />
+    <ClCompile Include="kalman.cpp" />
+    <ClCompile Include="localization.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="metrics.cpp" />
+    <ClCompile Include="video.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="algorithms.h" />
     <ClInclude Include="file management.h" />
+    <ClInclude Include="kalman.h" />
+    <ClInclude Include="localization.h" />
+    <ClInclude Include="metrics.h" />
+    <ClInclude Include="video.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
